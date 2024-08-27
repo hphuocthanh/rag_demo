@@ -1,0 +1,19 @@
+models:
+- type: main
+  engine: ollama
+  model: llama3.1
+
+rails:
+  # Input rails are invoked when new input from the user is received.
+  input:
+    flows:
+      - mask sensitive data on input
+
+  config:
+    # Configure the types of entities that should be masked on user input.
+    sensitive_data_detection:
+      input:
+        entities:
+          - PERSON
+          - EMAIL_ADDRESS
+  
