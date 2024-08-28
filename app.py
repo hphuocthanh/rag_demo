@@ -77,7 +77,9 @@ qa_chain = RetrievalQA.from_chain_type(
 # # Step 5: Run the query
 # result = qa_chain({ "query": query })
 # print(result)
-
+@app.route("/")
+def hello():
+    return "Hello World!"
 
 @app.route("/query", methods=["POST"])
 def query():
