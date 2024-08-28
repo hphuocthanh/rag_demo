@@ -8,7 +8,27 @@ from langchain_core.documents import Document
 from langchain_community.llms import Ollama
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from langchain_experimental.data_anonymizer import PresidioAnonymizer
+from presidio_anonymizer.entities import OperatorConfig
+from langchain_core.prompts import PromptTemplate
 
+prompt_template = PromptTemplate(
+    input_variables=["context", "question"],
+    template="""
+You are an assistant that helps users with their medical analysis. The following context may contain sensitive information. Ensure that your response does not include any Personally Identifiable Information (PII) such as names, phone numbers, email addresses.
+
+Context: {context}
+Query: {question}
+
+Provide a safe and anonymized response that answers the query while respecting privacy guidelines.
+"""
+)
+anonymizer = PresidioAnonymizer(analyzed_fields=["PERSON", "PHONE_NUMBER", "EMAIL_ADDRESS"],
+    operators={
+        "PERSON": OperatorConfig("redact", {}),
+        "PHONE_NUMBER": OperatorConfig("redact", {}),
+        "EMAIL_ADDRESS": OperatorConfig("redact", {}),
+    })
 llm = Ollama(model="llama3.1")
 app = Flask(__name__)
 CORS(app)
@@ -16,13 +36,7 @@ CORS(app)
 
 # Function to anonymize PII from the extracted text
 def anonymize_pii(text):
-    # Replace any patterns that resemble personal information
-    # text = re.sub(r'\b(?:\d{1,2}/\d{1,2}/\d{2,4}|\d{4}[-/]\d{2}[-/]\d{2})\b', '[REDACTED DATE]', text)  # Date of birth
-    # text = re.sub(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', '[REDACTED PHONE]', text)  # Phone numbers
-    # text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[REDACTED EMAIL]', text)  # Emails
-    # text = re.sub(r'\b\d{4}\b', '[REDACTED YEAR]', text)  # Years
-    # text = re.sub(r'\b[A-Z][a-z]+\b', '[REDACTED NAME]', text)  # Names (very basic)
-    return text
+    return anonymizer.anonymize(text)
 
 
 # Function to extract text from PDF
@@ -54,6 +68,7 @@ qa_chain = RetrievalQA.from_chain_type(
     chain_type="stuff",
     retriever=docsearch.as_retriever(),
     return_source_documents=True,
+    chain_type_kwargs={"prompt": prompt_template}
 )
 
 # # Step 4: Define a query

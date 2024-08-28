@@ -16,4 +16,3 @@ rails:
         entities:
           - PERSON
           - EMAIL_ADDRESS
-  
