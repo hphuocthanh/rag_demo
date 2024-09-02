@@ -40,7 +40,7 @@ distlib==0.3.8
 distro==1.9.0
 en-core-web-lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.7.1/en_core_web_lg-3.7.1-py3-none-any.whl
 executing==0.8.3
-faiss==1.8.0
+faiss-cpu
 Faker==28.0.0
 fastapi==0.112.2
 fastembed==0.3.6

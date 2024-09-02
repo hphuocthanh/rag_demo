@@ -6,7 +6,7 @@ from langchain_community.vectorstores import FAISS
 from langchain.chains import RetrievalQA
 from langchain_core.documents import Document
 from langchain_community.llms import Ollama
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from langchain_experimental.data_anonymizer import PresidioAnonymizer
 from presidio_anonymizer.entities import OperatorConfig
@@ -29,7 +29,7 @@ anonymizer = PresidioAnonymizer(analyzed_fields=["PERSON", "PHONE_NUMBER", "EMAI
         "PHONE_NUMBER": OperatorConfig("redact", {}),
         "EMAIL_ADDRESS": OperatorConfig("redact", {}),
     })
-llm = Ollama(model="llama3.1")
+llm = Ollama(model="llama3.1", base_url="http://ollama-container:11434")
 app = Flask(__name__)
 CORS(app)
 
@@ -59,7 +59,7 @@ for filename in os.listdir(pdf_dir):
         documents.append(Document(page_content=text))
 
 # Step 1: Create embeddings for the documents
-embedding_model = OllamaEmbeddings(model="llama3.1")
+embedding_model = OllamaEmbeddings(model="llama3.1", base_url="http://ollama-container:11434")
 docsearch = FAISS.from_documents(documents, embedding_model)
 
 # Step 3: Create a RetrievalQA chain using the local LLM
@@ -79,7 +79,7 @@ qa_chain = RetrievalQA.from_chain_type(
 # print(result)
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return render_template("index.html")
 
 @app.route("/query", methods=["POST"])
 def query():
@@ -94,4 +94,4 @@ def query():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=8906)

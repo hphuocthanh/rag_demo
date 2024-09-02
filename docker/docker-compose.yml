@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  ollama-container:
+    build:
+      context: .
+      dockerfile: Dockerfile.ollama
+    volumes:
+      - ./data:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - ollama-network
+
+  chat-assist:
+    image: chat-assist
+    ports:
+      - "8906:8906"
+    depends_on:
+      - ollama-container
+    networks:
+      - ollama-network
+networks:
+  ollama-network:
+    driver: bridge
