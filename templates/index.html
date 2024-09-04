@@ -1,153 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Health Query Chatbot</title>
-	<style>
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f5f5f5;
-			margin: 0;
-			padding: 0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-		}
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Health Query Chatbot</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f5f5f5;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				height: 100vh;
+			}
 
-		.chat-container {
-			width: 400px;
-			background-color: white;
-			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-			border-radius: 10px;
-			overflow: hidden;
-		}
+			.chat-container {
+				width: 600px;
+				background-color: white;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+				border-radius: 10px;
+				overflow: hidden;
+			}
 
-		.chat-box {
-			height: 400px;
-			padding: 10px;
-			overflow-y: auto;
-			border-bottom: 1px solid #ddd;
-		}
+			.chat-box {
+				height: 600px;
+				padding: 10px;
+				overflow-y: auto;
+				border-bottom: 1px solid #ddd;
+			}
 
-		.input-container {
-			display: flex;
-			padding: 10px;
-			background-color: #f5f5f5;
-		}
+			.input-container {
+				display: flex;
+				padding: 10px;
+				background-color: #f5f5f5;
+			}
 
-		input[type="text"] {
-			flex: 1;
-			padding: 10px;
-			border: 1px solid #ddd;
-			border-radius: 5px;
-			margin-right: 10px;
-		}
+			input[type='text'] {
+				flex: 1;
+				padding: 10px;
+				border: 1px solid #ddd;
+				border-radius: 5px;
+				margin-right: 10px;
+			}
 
-		button {
-			padding: 10px 20px;
-			background-color: #4CAF50;
-			color: white;
-			border: none;
-			border-radius: 5px;
-			cursor: pointer;
-		}
+			button {
+				padding: 10px 20px;
+				background-color: #4caf50;
+				color: white;
+				border: none;
+				border-radius: 5px;
+				cursor: pointer;
+			}
 
-		button:hover {
-			background-color: #45a049;
-		}
+			button:hover {
+				background-color: #45a049;
+			}
 
-		.message {
-			margin: 10px 0;
-		}
+			.message {
+				margin: 10px 0;
+			}
 
-		.user-message {
-			text-align: right;
-		}
+			.user-message {
+				text-align: right;
+			}
 
-		.user-message .message-content {
-			background-color: #DCF8C6;
-			display: inline-block;
-			padding: 10px;
-			border-radius: 10px;
-		}
+			.user-message .message-content {
+				background-color: #dcf8c6;
+				display: inline-block;
+				padding: 10px;
+				border-radius: 10px;
+			}
 
-		.bot-message {
-			text-align: left;
-		}
+			.bot-message {
+				text-align: left;
+			}
 
-		.bot-message .message-content {
-			background-color: #E8E8E8;
-			display: inline-block;
-			padding: 10px;
-			border-radius: 10px;
-		}
-	</style>
-</head>
-<body>
-<div class="chat-container">
-	<div id="chat-box" class="chat-box"></div>
-	<div class="input-container">
-		<input type="text" id="user-input" placeholder="Ask your question..." autocomplete="off">
-		<button id="send-btn">Send</button>
-	</div>
-</div>
-<script>
-	document.getElementById('send-btn').addEventListener('click', function() {
-		sendMessage();
-	});
-
-	document.getElementById('user-input').addEventListener('keypress', function(e) {
-		if (e.key === 'Enter') {
-			sendMessage();
-		}
-	});
-
-	function sendMessage() {
-		const userInput = document.getElementById('user-input').value;
-		if (userInput.trim() === '') return;
-
-		// Append user message to chat box
-		appendMessage('user-message', userInput);
-
-		// Clear input
-		document.getElementById('user-input').value = '';
-
-		// Send the user input to the server
-		fetch('/query', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ query: userInput })
-		})
-				.then(response => response.json())
-				.then(data => {
-					// Append bot response to chat box
-					appendMessage('bot-message', data.result);
+			.bot-message .message-content {
+				background-color: #e8e8e8;
+				display: inline-block;
+				padding: 10px;
+				border-radius: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="chat-container">
+			<div id="chat-box" class="chat-box"></div>
+			<div class="input-container">
+				<input
+					type="text"
+					id="user-input"
+					placeholder="Ask your question..."
+					autocomplete="off"
+				/>
+				<button id="send-btn">Send</button>
+			</div>
+		</div>
+		<script>
+			document
+				.getElementById('send-btn')
+				.addEventListener('click', function () {
+					sendMessage()
 				})
-				.catch(error => {
-					console.error('Error:', error);
-					appendMessage('bot-message', 'Error occurred, please try again.');
-				});
-	}
 
-	function appendMessage(sender, message) {
-		const chatBox = document.getElementById('chat-box');
-		const messageElement = document.createElement('div');
-		messageElement.classList.add('message', sender);
+			document
+				.getElementById('user-input')
+				.addEventListener('keypress', function (e) {
+					if (e.key === 'Enter') {
+						sendMessage()
+					}
+				})
 
-		const messageContent = document.createElement('div');
-		messageContent.classList.add('message-content');
-		messageContent.innerText = message;
+			const btnEl = document.getElementById('send-btn')
 
-		messageElement.appendChild(messageContent);
-		chatBox.appendChild(messageElement);
+			function sendMessage() {
+				btnEl.disabled = true
+				const userInput = document.getElementById('user-input').value
+				if (userInput.trim() === '') return
 
-		// Scroll to the bottom of the chat box
-		chatBox.scrollTop = chatBox.scrollHeight;
-	}
-</script>
-</body>
+				// Append user message to chat box
+				appendMessage('user-message', userInput)
+
+				// Clear input
+				document.getElementById('user-input').value = ''
+
+				// Send the user input to the server
+				// fetch('http://host.docker.internal:8906/query', {
+				fetch('/query', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ query: userInput }),
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						// Append bot response to chat box
+						appendMessage('bot-message', data.result)
+					})
+					.catch((error) => {
+						console.error('Error:', error)
+						appendMessage('bot-message', 'Error occurred, please try again.')
+					})
+					.finally(() => {
+						btnEl.disabled = false
+					})
+			}
+
+			function appendMessage(sender, message) {
+				const chatBox = document.getElementById('chat-box')
+				const messageElement = document.createElement('div')
+				messageElement.classList.add('message', sender)
+
+				const messageContent = document.createElement('div')
+				messageContent.classList.add('message-content')
+				messageContent.innerText = message
+
+				messageElement.appendChild(messageContent)
+				chatBox.appendChild(messageElement)
+
+				// Scroll to the bottom of the chat box
+				chatBox.scrollTop = chatBox.scrollHeight
+			}
+		</script>
+	</body>
 </html>

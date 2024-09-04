@@ -15,7 +15,7 @@ from langchain_core.prompts import PromptTemplate
 prompt_template = PromptTemplate(
     input_variables=["context", "question"],
     template="""
-You are an assistant that helps managers to inquire about medical analysis at their companies. The following context may contain sensitive information. Ensure that your response does not include any Personally Identifiable Information (PII) such as names, phone numbers, email addresses. The context that you receive is the medical data that was collected by the company.
+You are an assistant that helps users with their medical analysis. The following context may contain sensitive information. Ensure that your response does not include any Personally Identifiable Information (PII) such as names, phone numbers, email addresses.
 
 Context: {context}
 Query: {question}
@@ -29,7 +29,7 @@ anonymizer = PresidioAnonymizer(analyzed_fields=["PERSON", "PHONE_NUMBER", "EMAI
         "PHONE_NUMBER": OperatorConfig("redact", {}),
         "EMAIL_ADDRESS": OperatorConfig("redact", {}),
     })
-llm = Ollama(model="tinyllama", base_url="http://host.docker.internal:11434")
+llm = Ollama(model="tinyllama", base_url="http://ollama-container:11434")
 app = Flask(__name__)
 CORS(app)
 
@@ -59,7 +59,7 @@ for filename in os.listdir(pdf_dir):
         documents.append(Document(page_content=text))
 
 # Step 1: Create embeddings for the documents
-embedding_model = OllamaEmbeddings(model="tinyllama", base_url="http://host.docker.internal:11434")
+embedding_model = OllamaEmbeddings(model="tinyllama", base_url="http://ollama-container:11434")
 docsearch = FAISS.from_documents(documents, embedding_model)
 
 # Step 3: Create a RetrievalQA chain using the local LLM
@@ -94,4 +94,4 @@ def query():
 
 
 if __name__ == "__main__":
-    app.run(host="host.docker.internal", port=8906)
+    app.run(host="0.0.0.0", port=8906)

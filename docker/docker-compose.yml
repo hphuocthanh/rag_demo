@@ -12,7 +12,9 @@ services:
       - ollama-network
 
   chat-assist:
-    image: chat-assist
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8906:8906"
     depends_on:
