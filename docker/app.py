@@ -54,6 +54,7 @@ pdf_dir = "./data/"
 documents = []
 
 for filename in os.listdir(pdf_dir):
+    print(f"Processing {filename}")
     if filename.endswith(".pdf"):
         text = extract_text_from_pdf(os.path.join(pdf_dir, filename))
         documents.append(Document(page_content=text))

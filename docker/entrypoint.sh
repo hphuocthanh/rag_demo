@@ -12,16 +12,16 @@ echo "Pulling the tinyllama model..."
 ollama pull tinyllama
 echo "Done"
 
-# # Check if the model pull was successful
+# Check if the model pull was successful
 # if [ $? -eq 0 ]; then
 #     echo "Model pulled successfully. Creating success flag."
 #     touch /root/.ollama/model_pulled
-# else
-#     echo "Failed to pull the model."
-#     exit 1
+# # else
+# #     echo "Failed to pull the model."
+# #     exit 1
 # fi
 
 # Start the main Ollama process with the correct arguments
 # Replace `run` with the actual command and arguments needed for your use case
-echo "Starting the main Ollama process..."
-exec ollama run tinyllama
+# echo "Starting the main Ollama process..."
+# exec ollama run tinyllama

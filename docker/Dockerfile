@@ -3,13 +3,14 @@ FROM python:3.11-slim
 
 # Install system dependencies required for faiss and curl
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake \
-    libblas-dev \
-    liblapack-dev \
-    wget \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+  build-essential \
+  cmake \
+  libblas-dev \
+  liblapack-dev \
+  wget \
+  curl \
+  netcat-traditional \
+  && rm -rf /var/lib/apt/lists/*
 
 ## Install Ollama using curl
 #RUN curl -fsSL https://ollama.com/install.sh | bash
@@ -35,7 +36,6 @@ COPY wait-for-it.sh /wait-for-it.sh
 RUN chmod +x /wait-for-it.sh
 
 # Default entrypoint
-ENTRYPOINT ["/wait-for-it.sh", "ollama-container", "/root/.ollama/model_pulled", "--"]
+ENTRYPOINT ["/wait-for-it.sh", "ollama-container", "11434", "--"]
 ## Run app.py when the container launches
-#CMD ["ollama", "run", "llama3.1"]
 CMD ["python", "app.py"]

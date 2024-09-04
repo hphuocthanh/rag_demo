@@ -1,2 +1,3 @@
 NeMo-Guardrails
 docker/data/*
+!docker/data/*.pdf

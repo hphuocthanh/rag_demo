@@ -10,4 +10,4 @@ RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Default command to keep the container running or start the service
-CMD ["ollama", "run"]
+CMD ["ollama", "run", "tinyllama"]
